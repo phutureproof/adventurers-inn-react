@@ -4,11 +4,10 @@
         outline: none;
         box-sizing: border-box;
         padding: 20px;
-        margin: 10px 10px 10px 10px;
+        margin: 0;
         background-color: chocolate;
         border: none;
-        border-radius: 5px;
-        width: calc(100% - 20px);
+        width: 100%;
         transition: all 0.1s;
 
         &:hover {

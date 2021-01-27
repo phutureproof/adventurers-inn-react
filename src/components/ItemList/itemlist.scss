@@ -25,9 +25,19 @@
 
             button {
                 box-sizing: border-box;
-                padding: 20px;
-                margin: 10px;
-                width: calc(100% - 20px);
+                padding: 10px;
+                margin: 0;
+                width: 100%;
+            }
+
+            .multipliers {
+                background-color: #67210c;
+
+                p {
+                    font-size: 13px;
+                    color: #e3af4a;
+                    margin: 0 10px;
+                }
             }
         }
     }

@@ -46,6 +46,9 @@ class gameFunctionsClass {
         this.doBindings();
     }
 
+    /**
+     * doBindings
+     */
     doBindings() {
         this.formatNumber = this.formatNumber.bind(this);
         this.formatScore = this.formatScore.bind(this);
@@ -57,6 +60,7 @@ class gameFunctionsClass {
     /**
      * getItemCostWithMultiplier
      * @param item {Item}
+     * @returns {number}
      */
     calculateItemCostWithMultiplier(item) {
         let cost = item.baseCost;
@@ -176,6 +180,41 @@ class gameFunctionsClass {
             }
         });
         return items;
+    }
+
+    /**
+     * calculateBuyNItem
+     * @param item {Item}
+     * @param amount {number|string}
+     */
+    calculateBuyNItem(item, amount, currentScore = 0) {
+        if (typeof amount === 'number') {
+            let quantity = item.quantity;
+            let count = Number(item.quantity) + amount;
+            let modifier = Number(item.costModifier);
+            let cost = Number(item.baseCost);
+            let price = 0;
+
+            for (let i = 0; i < count; i++) {
+                if (i > 0) cost *= modifier;
+                if ( (i+1) > quantity) price += cost;
+            }
+
+            return price;
+
+        } else if (amount === 'max') {
+            let cost = 0;
+            let price = 0;
+            let iterator = 1;
+            while ( (price = this.calculateBuyNItem(item, iterator)) < currentScore) {
+                iterator += 1;
+                cost = price;
+            }
+            return {
+                cost: cost,
+                amount: (iterator - 1)
+            };
+        }
     }
 }
 

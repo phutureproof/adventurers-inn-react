@@ -5,7 +5,7 @@ import ItemMultiplier from "../classes/ItemMultiplier"
  * @type {Item[]}
  */
 const items = [
-    new Item('Barmaid', 100, 1.009, 0, 0.1, 1.0, true, [
+    new Item('Barstaff', 100, 1.009, 0, 0.1, 1.0, true, [
         new ItemMultiplier((item) => (Math.floor(item.quantity/100)), 0.5, 'Multiplied by .5 per 100')
     ], []),
     new Item('Miner', 10000, 1.009, 0, 10, 1.0, true, [

@@ -14,7 +14,7 @@ export default class Game extends React.Component {
     /* Time in seconds to remove salary */
     salaryTime = 60;
     /* Time in seconds to save game state to cookie */
-    saveTime = 15;
+    saveTime = 30;
     /* debug mode */
     debug = false;
     /* gameData debug mode */
@@ -151,10 +151,12 @@ export default class Game extends React.Component {
     }
 
     mapItemMultipliers(defaultItems, stateItems) {
+        let found = false;
         Array.from(defaultItems).forEach(dItem => {
             stateItems.forEach(sItem => {
                 if (dItem.name === sItem.name) {
                     sItem.multipliers = dItem.multipliers;
+                    found = true;
                 }
                 if (sItem.items) {
                     this.mapItemMultipliers(defaultItems, sItem.items);
@@ -164,6 +166,11 @@ export default class Game extends React.Component {
                 this.mapItemMultipliers(dItem, stateItems);
             }
         });
+
+        if(!found){
+            this.clearSaveData();
+            gameFunctions.restartGame();
+        }
     }
 
     clearSaveData() {

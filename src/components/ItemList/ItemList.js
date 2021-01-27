@@ -5,6 +5,9 @@ import gameFunctions from "../../utilities/gameFunctions";
 export default class ItemList extends React.Component {
 
     pluralise(word, amount) {
+        if(word === 'Barstaff') {
+            return word;
+        }
         return (amount === 0 || amount > 1) ? word + 's' : word;
     }
 
@@ -26,6 +29,10 @@ export default class ItemList extends React.Component {
 
         const markup = this.props.items.map((item) => {
             const itemIds = this.props.parents.slice().concat(item.id);
+            let buyfive = gameFunctions.formatScore(gameFunctions.calculateBuyNItem(item, 5));
+            let buyten = gameFunctions.formatScore(gameFunctions.calculateBuyNItem(item, 10));
+            let buyhundred = gameFunctions.formatScore(gameFunctions.calculateBuyNItem(item, 100));
+            let max = gameFunctions.calculateBuyNItem(item, 'max', this.props.currentScore);
             return (
                 <li key={item.id} className={item.canShow ? '' : 'hidden'}>
                     <div className="itemContainer">
@@ -35,10 +42,17 @@ export default class ItemList extends React.Component {
                             disabled={(this.props.currentScore < gameFunctions.calculateItemCostWithMultiplier(item))}
                             onClick={() => this.props.purchaseItem(itemIds, 1)}
                         >
-                            Buy {item.name} for {gameFunctions.formatNumber(gameFunctions.calculateItemCostWithMultiplier(item))}
+                            Hire {item.name} for {gameFunctions.formatScore(gameFunctions.calculateItemCostWithMultiplier(item))}
                         </button>
 
-                        {this.multipliers(item)}
+                        <button disabled={true}>Hire 5 for {buyfive}</button>
+                        <button disabled={true}>Hire 10 for {buyten}</button>
+                        <button disabled={true}>Hire 100 for {buyhundred}</button>
+                        <button disabled={true}>Hire {max.amount} for {gameFunctions.formatScore(max.cost)}</button>
+
+                        <div className="multipliers">
+                            {this.multipliers(item)}
+                        </div>
 
                         <ItemList
                             items={item.items}
