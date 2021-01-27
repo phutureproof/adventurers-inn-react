@@ -1,0 +1,13 @@
+.stats {
+    font-family: "Courier New", monospace;
+
+    .debugMessage {
+        font-weight: bold;
+        color: red;
+        text-shadow: 2px 2px 2px black;
+    }
+
+    .toggleDisplay {
+        cursor: pointer;
+    }
+}
