@@ -8,7 +8,7 @@ export default class App extends React.Component {
             <div className="App">
                 <Game
                     title="Adventurer's Inn"
-                    version="0.12.11"
+                    version="0.13.33"
                 />
             </div>
         );

@@ -33,7 +33,7 @@ export default class Layout extends React.Component {
                 </div>
                 <Score currentScore={this.props.currentScore} />
                 <Salary salary={this.props.salary} />
-                <div className="right">
+                <div className="items">
                     <button
                         className="defaultItemButton"
                         onClick={() => this.props.defaultItemClickHandler()}

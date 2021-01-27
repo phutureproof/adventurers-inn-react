@@ -1,10 +1,23 @@
 .layout {
 
     .defaultItemButton {
+        outline: none;
         box-sizing: border-box;
         padding: 20px;
         margin: 10px 10px 10px 10px;
+        background-color: chocolate;
+        border: none;
+        border-radius: 5px;
         width: calc(100% - 20px);
+        transition: all 0.1s;
+
+        &:hover {
+            background-color: lightslategray;
+        }
+
+        &:active {
+            background-color: slategray;
+        }
     }
 
     .header {
@@ -22,8 +35,12 @@
         color: white;
     }
 
-    .right {
-        background-color: #666;
+    .items {
+        border: none;
+        border-top: 1px solid #e3af4a;
+        border-bottom: 1px solid #e3af4a;
+
+        background-color: #350c04;
         color: black;
     }
 

@@ -9,6 +9,10 @@ body {
   background-color: #3b1103;
 }
 
+body > * {
+  outline: none;
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
