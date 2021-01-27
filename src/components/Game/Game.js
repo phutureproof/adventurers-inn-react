@@ -151,12 +151,11 @@ export default class Game extends React.Component {
     }
 
     mapItemMultipliers(defaultItems, stateItems) {
-        let found = false;
         Array.from(defaultItems).forEach(dItem => {
             stateItems.forEach(sItem => {
-                if (dItem.name === sItem.name) {
+                if (dItem.id === sItem.id) {
                     sItem.multipliers = dItem.multipliers;
-                    found = true;
+                    sItem.name = dItem.name;
                 }
                 if (sItem.items) {
                     this.mapItemMultipliers(defaultItems, sItem.items);
@@ -166,11 +165,6 @@ export default class Game extends React.Component {
                 this.mapItemMultipliers(dItem, stateItems);
             }
         });
-
-        if(!found){
-            this.clearSaveData();
-            gameFunctions.restartGame();
-        }
     }
 
     clearSaveData() {
@@ -300,7 +294,7 @@ export default class Game extends React.Component {
         }
     }
 
-    purchaseItem(itemIds, quantity) {
+    purchaseItem(itemIds, quantity = 1, cost = 0) {
         /** @type {Item} **/
         let foundItem;
         let price;
@@ -319,7 +313,7 @@ export default class Game extends React.Component {
                 });
             }
         } else {
-            price = gameFunctions.calculateItemCostWithMultiplier(foundItem);
+            price = (cost > 0) ? cost : gameFunctions.calculateItemCostWithMultiplier(foundItem);
             foundItem.quantity += quantity;
             items = gameFunctions.calculateItemMultipliers(items);
 
