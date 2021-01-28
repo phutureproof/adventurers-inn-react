@@ -39,6 +39,14 @@
                     margin: 0 10px;
                 }
             }
+
+            .buyButtons {
+
+                button {
+                    display: inline-block;
+                    width: (100% / 5);
+                }
+            }
         }
     }
 }
