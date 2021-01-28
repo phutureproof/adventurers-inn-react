@@ -284,12 +284,16 @@ export default class Game extends React.Component {
     }
 
     onFocus() {
-        console.log("Gained Focus");
+        if (this.debug) {
+            Logger.log("Gained Focus");
+        }
         this.loadGame();
     }
 
     onBlur() {
-        console.log("Lost Focus");
+        if (this.debug) {
+            Logger.log("Lost Focus");
+        }
         this.saveGame();
     }
 
