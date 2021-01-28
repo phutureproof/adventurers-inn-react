@@ -1,8 +1,9 @@
 import React from "react";
 import Stats from "../Stats/Stats";
 import ItemList from "../ItemList/ItemList";
-import {Score} from "../Score/Score";
-import {Salary} from "../Salary/Salary";
+import Score from "../Score/Score";
+import Salary from "../Salary/Salary";
+import DefaultItemButton from "../DefaultItemButton/DefaultItemButton";
 import './layout.scss';
 
 export default class Layout extends React.Component {
@@ -35,14 +36,11 @@ export default class Layout extends React.Component {
                     tickLength={this.props.tickLength}
                     currentScore={this.props.currentScore}
                 />
-                <Salary salary={this.props.salary} />
+                <Salary salary={this.props.salary}/>
                 <div className="items">
-                    <button
-                        className="defaultItemButton"
-                        onClick={() => this.props.defaultItemClickHandler()}
-                    >
-                        Pull Pint
-                    </button>
+                    <DefaultItemButton
+                        defaultItemClickHandler={this.props.defaultItemClickHandler}
+                    />
                     <ItemList
                         items={this.props.items}
                         currentScore={this.props.currentScore}

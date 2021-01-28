@@ -1,0 +1,22 @@
+.defaultItemButton {
+
+  button {
+    outline: none;
+    box-sizing: border-box;
+    padding: 20px;
+    margin: 0;
+    background-color: chocolate;
+    border: none;
+    width: 100%;
+    transition: all 0.1s;
+
+    &:hover {
+      background-color: lightslategray;
+    }
+
+    &:active {
+      background-color: slategray;
+    }
+  }
+
+}
