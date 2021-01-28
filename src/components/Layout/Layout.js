@@ -31,7 +31,10 @@ export default class Layout extends React.Component {
                 <div className="left">
                     {stats}
                 </div>
-                <Score currentScore={this.props.currentScore} />
+                <Score
+                    tickLength={this.props.tickLength}
+                    currentScore={this.props.currentScore}
+                />
                 <Salary salary={this.props.salary} />
                 <div className="items">
                     <button

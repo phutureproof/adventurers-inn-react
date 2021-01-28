@@ -10,7 +10,7 @@ let Cookie = require('js-cookie');
 export default class Game extends React.Component {
 
     /* Frames Per Second */
-    FPS = 30;
+    FPS = 60;
 
     /* timers */
     timers = {
@@ -160,7 +160,6 @@ export default class Game extends React.Component {
 
         if (toAdd > 0) {
             state.currentScore += toAdd;
-            alert(`Your staff earned ${gameFunctions.formatScore(toAdd)} while you were away!`);
         }
 
         this.setState(
