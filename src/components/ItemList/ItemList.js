@@ -61,7 +61,7 @@ export default class ItemList extends React.Component {
                                 Hire 100 for {gameFunctions.formatScore(item.prices.hundred)}
                             </button>
                             <button
-                                disabled={(max.amount < 1)}
+                                disabled={(this.props.currentScore < max.cost)}
                                 onClick={() => this.props.purchaseItem(itemIds, max.amount, max.cost)}
                             >
                                 Hire {max.amount} for {gameFunctions.formatScore(max.cost)}

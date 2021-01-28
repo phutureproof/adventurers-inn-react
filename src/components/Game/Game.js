@@ -10,7 +10,7 @@ let Cookie = require('js-cookie');
 export default class Game extends React.Component {
 
     /* Frames Per Second */
-    FPS = 15;
+    FPS = 30;
     /* Time in seconds to remove salary */
     salaryTime = 60;
     /* Time in seconds to save game state to cookie */
@@ -59,6 +59,8 @@ export default class Game extends React.Component {
         this.saveGame = this.saveGame.bind(this);
         this.loadGame = this.loadGame.bind(this);
         this.clearSaveData = this.clearSaveData.bind(this);
+        this.onFocus = this.onFocus.bind(this);
+        this.onBlur = this.onBlur.bind(this);
     }
 
     render() {
@@ -100,7 +102,11 @@ export default class Game extends React.Component {
 
                 <button onClick={() => this.saveGame()}>Save Game</button>
                 <button onClick={() => this.loadGame()}>Load Game</button>
-                <button onClick={() => this.clearSaveData()}>Clear Game Save Data</button>
+                <button onClick={() => {
+                    this.clearSaveData();
+                    gameFunctions.restartGame();
+                }}>Clear Game Save Data
+                </button>
             </div>
         );
     }
@@ -129,7 +135,7 @@ export default class Game extends React.Component {
         let diff = Math.floor((date - state.timestamp) / 1000);
         let toAdd = (state.perSecond * state.perSecondMultiplier) * diff;
 
-        if(toAdd > 0) {
+        if (toAdd > 0) {
             state.currentScore += toAdd;
             alert(`Your staff earned ${gameFunctions.formatScore(toAdd)} while you were away!`);
         }
@@ -253,6 +259,8 @@ export default class Game extends React.Component {
     }
 
     componentDidMount() {
+        window.addEventListener("focus", this.onFocus);
+        window.addEventListener("blur", this.onBlur);
         if (Cookie.getJSON("gameState")) {
             this.loadGame();
         } else {
@@ -269,8 +277,20 @@ export default class Game extends React.Component {
     }
 
     componentWillUnmount() {
+        window.removeEventListener("focus", this.onFocus);
+        window.removeEventListener("blur", this.onBlur);
         this.stopTicking();
         this.stopSalaryTimer();
+    }
+
+    onFocus() {
+        console.log("Gained Focus");
+        this.loadGame();
+    }
+
+    onBlur() {
+        console.log("Lost Focus");
+        this.saveGame();
     }
 
     takeSalary() {
@@ -313,12 +333,7 @@ export default class Game extends React.Component {
             }
         } else {
             foundItem.quantity += quantity;
-            foundItem.prices = {
-                one: gameFunctions.calculateBuyNItem(foundItem, 1),
-                five: gameFunctions.calculateBuyNItem(foundItem, 5),
-                ten: gameFunctions.calculateBuyNItem(foundItem, 10),
-                hundred: gameFunctions.calculateBuyNItem(foundItem, 100),
-            };
+            foundItem.prices = gameFunctions.calculateItemPrices(foundItem);
             items = gameFunctions.calculateItemMultipliers(items);
 
             if (this.debug) {
