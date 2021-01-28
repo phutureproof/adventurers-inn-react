@@ -20,11 +20,14 @@
     }
 
     .header {
-        background-color: #323232;
-        color: #fef04b;
-        text-shadow: 2px 2px 2px black;
+
+        background-color: #612203;
 
         h1 {
+            margin: 0;
+            font-size: 45px;
+            color: #ee6206;
+            text-shadow: 2px 2px 2px black;
             text-align: center;
         }
     }
@@ -35,6 +38,7 @@
     }
 
     .items {
+        padding: 0 10px;
         border: none;
         border-top: 1px solid #e3af4a;
         border-bottom: 1px solid #e3af4a;

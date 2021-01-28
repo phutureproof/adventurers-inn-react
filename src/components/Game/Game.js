@@ -11,6 +11,21 @@ export default class Game extends React.Component {
 
     /* Frames Per Second */
     FPS = 30;
+
+    /* timers */
+    timers = {
+        /* dont change these */
+        salaryTimer: 0,
+        bonusTimer: 0,
+        saveTimer: 0,
+        defaults: {
+            /* change these */
+            salaryTimer: 60, /* 1 minute */
+            bonusTimer: 900, /* 15 minutes */
+            saveTimer: 30, /* 30 seconds */
+        }
+    };
+
     /* Time in seconds to remove salary */
     salaryTime = 60;
     /* Time in seconds to save game state to cookie */
@@ -36,7 +51,7 @@ export default class Game extends React.Component {
         defaultItemClicks: 0,
         perSecond: 0.0,
         perSecondMultiplier: 1.0,
-        currentScore: 100.0,
+        currentScore: 0.0,
         maxScore: 0.0,
         salary: 0.0,
         gameOver: false,
