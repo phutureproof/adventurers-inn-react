@@ -39,32 +39,32 @@ export default class ItemList extends React.Component {
                                 disabled={(this.props.currentScore < item.prices.one)}
                                 onClick={() => this.props.purchaseItem(itemIds, 1, item.prices.one)}
                             >
-                                Hire 1 for {gameFunctions.formatScore(item.prices.one)}
+                                Hire 1<br />{gameFunctions.formatScore(item.prices.one)}
                             </button>
 
                             <button
                                 disabled={(this.props.currentScore < item.prices.five)}
                                 onClick={() => this.props.purchaseItem(itemIds, 5, item.prices.five)}
                             >
-                                Hire 5 for {gameFunctions.formatScore(item.prices.five)}
+                                Hire 5<br />{gameFunctions.formatScore(item.prices.five)}
                             </button>
                             <button
                                 disabled={(this.props.currentScore < item.prices.ten)}
                                 onClick={() => this.props.purchaseItem(itemIds, 10, item.prices.ten)}
                             >
-                                Hire 10 for {gameFunctions.formatScore(item.prices.ten)}
+                                Hire 10<br />{gameFunctions.formatScore(item.prices.ten)}
                             </button>
                             <button
                                 disabled={(this.props.currentScore < item.prices.hundred)}
                                 onClick={() => this.props.purchaseItem(itemIds, 100, item.prices.hundred)}
                             >
-                                Hire 100 for {gameFunctions.formatScore(item.prices.hundred)}
+                                Hire 100<br />{gameFunctions.formatScore(item.prices.hundred)}
                             </button>
                             <button
                                 disabled={(this.props.currentScore < max.cost)}
                                 onClick={() => this.props.purchaseItem(itemIds, max.amount, max.cost)}
                             >
-                                Hire {max.amount} for {gameFunctions.formatScore(max.cost)}
+                                Hire {max.amount}<br />{gameFunctions.formatScore(max.cost)}
                             </button>
                         </div>
 
