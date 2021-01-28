@@ -1,4 +1,5 @@
 import React from "react";
+import './defaultItemButton.scss';
 
 export default class DefaultItemButton extends React.Component {
     constructor(props) {
