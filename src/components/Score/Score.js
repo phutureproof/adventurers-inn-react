@@ -8,7 +8,7 @@ export default class Score extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            score: 0
+            score: this.props.currentScore
         }
     }
 
@@ -21,14 +21,16 @@ export default class Score extends React.Component {
     }
 
     tick() {
-        if ((this.props.currentScore - this.state.score) < 0.01) {
+
+        let testScore = (this.props.currentScore - this.state.score);
+        if (Math.abs(testScore) < 0.01) {
             this.setState({score: this.props.currentScore});
             return;
         }
 
         if (this.state.score !== this.props.currentScore) {
             let newScore = (
-                (this.props.currentScore - this.state.score)
+                (testScore)
                 * this.props.tickLength / 50
             );
             this.setState({
@@ -46,6 +48,5 @@ export default class Score extends React.Component {
 
     componentWillUnmount() {
         clearInterval(this.timer);
-        this.timer = null;
     }
 }

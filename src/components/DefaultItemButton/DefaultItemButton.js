@@ -24,7 +24,7 @@ export default class DefaultItemButton extends React.Component {
     render() {
         return (
             <div className="defaultItemButton">
-                <button onClick={() => this.handleClick()}>Pull Pint</button>
+                <button onClick={() => this.handleClick()} disabled={this.state.disabled}>Pull Pint</button>
             </div>
         );
     }

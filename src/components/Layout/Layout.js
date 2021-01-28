@@ -32,11 +32,19 @@ export default class Layout extends React.Component {
                 <div className="left">
                     {stats}
                 </div>
-                <Score
-                    tickLength={this.props.tickLength}
-                    currentScore={this.props.currentScore}
-                />
-                <Salary salary={this.props.salary}/>
+
+                <div className="scoreContainer">
+                    <Score
+                        tickLength={this.props.tickLength}
+                        currentScore={this.props.currentScore}
+                        perSecond={this.props.perSecond}
+                        perSecondMultiplier={this.props.perSecondMultiplier}
+                    />
+                    <Salary
+                        salary={this.props.salary}
+                        salaryTimer={this.props.salaryTimer}
+                    />
+                </div>
                 <div className="items">
                     <DefaultItemButton
                         defaultItemClickHandler={this.props.defaultItemClickHandler}

@@ -100,6 +100,7 @@ export default class Game extends React.Component {
                 maxScore={this.state.maxScore}
                 salary={this.state.salary}
                 salaryTime={this.salaryTime}
+                salaryTimer={this.timers.salaryTimer}
                 gameOver={this.state.gameOver}
                 items={this.state.items}
                 purchaseItem={this.purchaseItem}
@@ -126,8 +127,10 @@ export default class Game extends React.Component {
                 <button onClick={() => this.saveGame()}>Save Game</button>
                 <button onClick={() => this.loadGame()}>Load Game</button>
                 <button onClick={() => {
-                    this.clearSaveData();
-                    gameFunctions.restartGame();
+                    if(window.confirm("Clear your data and reload?")) {
+                        this.clearSaveData();
+                        gameFunctions.restartGame();
+                    }
                 }}>Clear Game Save Data
                 </button>
             </div>
@@ -136,6 +139,7 @@ export default class Game extends React.Component {
 
     saveGame() {
         let saveData = {...this.state};
+        saveData.timers = {...this.timers};
         saveData.timestamp = Date.now();
         Cookie.set('gameState', saveData, {expires: 365});
         if (this.debug) {
@@ -154,6 +158,8 @@ export default class Game extends React.Component {
         let defaultItems = gameData(this.debugGameData);
         this.mapItemMultipliers(defaultItems, state.items);
         state.items = gameFunctions.calculateItemMultipliers(state.items);
+        this.timers = {...state.timers};
+        delete state.timers;
         let date = Date.now();
         let diff = Math.floor((date - state.timestamp) / 1000);
         let toAdd = (state.perSecond * state.perSecondMultiplier) * diff;

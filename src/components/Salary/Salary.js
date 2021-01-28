@@ -4,9 +4,10 @@ import './salary.scss';
 
 export default class Salary extends React.Component {
     render() {
+        let fontSize = Math.max(20, 50 - this.props.salaryTimer);
         return (
             <div className="salary">
-                <p>{gameFunctions.formatScore(this.props.salary)}</p>
+                <p style={{fontSize: fontSize + 'px'}}>{gameFunctions.formatScore(this.props.salary)}</p>
             </div>
         );
     }
