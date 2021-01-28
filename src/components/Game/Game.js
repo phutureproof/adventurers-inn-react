@@ -29,10 +29,6 @@ export default class Game extends React.Component {
     bonusActive = false;
     bonusDoubled = false;
 
-    /* Time in seconds to remove salary */
-    salaryTime = 60;
-    /* Time in seconds to save game state to cookie */
-    saveTime = 30;
     /* debug mode */
     debug = false;
     /* gameData debug mode */
@@ -54,7 +50,7 @@ export default class Game extends React.Component {
         defaultItemClicks: 0,
         perSecond: 0.0,
         perSecondMultiplier: 1.0,
-        currentScore: 0.0,
+        currentScore: 1000.0,
         maxScore: 0.0,
         salary: 0.0,
         gameOver: false,
@@ -99,7 +95,7 @@ export default class Game extends React.Component {
                 currentScore={this.state.currentScore}
                 maxScore={this.state.maxScore}
                 salary={this.state.salary}
-                salaryTime={this.salaryTime}
+                salaryTime={this.timers.defaults.salaryTime}
                 salaryTimer={this.timers.salaryTimer}
                 gameOver={this.state.gameOver}
                 items={this.state.items}
@@ -150,7 +146,7 @@ export default class Game extends React.Component {
         }
     }
 
-    loadGame() {
+    loadGame(showToast = false) {
         let state = Cookie.getJSON('gameState');
         if (!state) {
             return;
@@ -181,7 +177,10 @@ export default class Game extends React.Component {
             Logger.log(state);
         }
 
-        return toAdd;
+        if(showToast && toAdd > 0) {
+            let toastMessage = `Your staff earned ${gameFunctions.formatScore(toAdd)} while you were away!`;
+            this.props.showToast(toastMessage, 'success');
+        }
     }
 
     mapItemMultipliers(defaultItems, stateItems) {
@@ -328,7 +327,7 @@ export default class Game extends React.Component {
         window.addEventListener("focus", this.onFocus);
         window.addEventListener("blur", this.onBlur);
         if (Cookie.getJSON("gameState")) {
-            this.loadGame();
+            this.loadGame(true);
         } else {
             this.setState({
                 items: gameData(this.debugGameData)
@@ -352,8 +351,7 @@ export default class Game extends React.Component {
         if (this.debug) {
             Logger.log("Gained Focus");
         }
-        this.loadGame();
-
+        this.loadGame(true);
     }
 
     onBlur() {

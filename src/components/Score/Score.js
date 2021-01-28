@@ -31,7 +31,7 @@ export default class Score extends React.Component {
         if (this.state.score !== this.props.currentScore) {
             let newScore = (
                 (testScore)
-                * this.props.tickLength / 50
+                * this.props.tickLength / 300
             );
             this.setState({
                 score: this.state.score + newScore
