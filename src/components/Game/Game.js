@@ -10,7 +10,7 @@ let Cookie = require('js-cookie');
 export default class Game extends React.Component {
 
     /* Frames Per Second */
-    FPS = 30;
+    FPS = 15;
     /* Time in seconds to remove salary */
     salaryTime = 60;
     /* Time in seconds to save game state to cookie */
@@ -36,7 +36,7 @@ export default class Game extends React.Component {
         defaultItemClicks: 0,
         perSecond: 0.0,
         perSecondMultiplier: 1.0,
-        currentScore: 0.0,
+        currentScore: 100.0,
         maxScore: 0.0,
         salary: 0.0,
         gameOver: false,
@@ -297,7 +297,6 @@ export default class Game extends React.Component {
     purchaseItem(itemIds, quantity = 1, cost = 0) {
         /** @type {Item} **/
         let foundItem;
-        let price;
         let items = this.state.items.slice();
 
         itemIds.forEach(id => {
@@ -313,20 +312,25 @@ export default class Game extends React.Component {
                 });
             }
         } else {
-            price = (cost > 0) ? cost : gameFunctions.calculateItemCostWithMultiplier(foundItem);
             foundItem.quantity += quantity;
+            foundItem.prices = {
+                one: gameFunctions.calculateBuyNItem(foundItem, 1),
+                five: gameFunctions.calculateBuyNItem(foundItem, 5),
+                ten: gameFunctions.calculateBuyNItem(foundItem, 10),
+                hundred: gameFunctions.calculateBuyNItem(foundItem, 100),
+            };
             items = gameFunctions.calculateItemMultipliers(items);
 
             if (this.debug) {
                 Logger.log({
                     message: `Purchasing ${foundItem.name}`,
-                    price: price
+                    price: cost
                 });
             }
 
             this.setState({
                 items: items,
-                currentScore: (this.state.currentScore - price)
+                currentScore: (this.state.currentScore - cost)
             }, () => {
                 this.setState({
                     perSecond: gameFunctions.calculatePerSecond(this.state.items),

@@ -29,9 +29,6 @@ export default class ItemList extends React.Component {
 
         const markup = this.props.items.map((item) => {
             const itemIds = this.props.parents.slice().concat(item.id);
-            let buyfive = gameFunctions.calculateBuyNItem(item, 5);
-            let buyten = gameFunctions.calculateBuyNItem(item, 10);
-            let buyhundred = gameFunctions.calculateBuyNItem(item, 100);
             let max = gameFunctions.calculateBuyNItem(item, 'max', this.props.currentScore);
             return (
                 <li key={item.id} className={item.canShow ? '' : 'hidden'}>
@@ -39,16 +36,36 @@ export default class ItemList extends React.Component {
                         <p>{item.quantity} {this.pluralise(item.name, item.quantity)} generating {gameFunctions.formatNumber((item.quantity * item.perSecond) * item.perSecondMultiplier)} per second</p>
                         <div className="buyButtons">
                             <button
-                                disabled={(this.props.currentScore < gameFunctions.calculateItemCostWithMultiplier(item))}
-                                onClick={() => this.props.purchaseItem(itemIds, 1)}
+                                disabled={(this.props.currentScore < item.prices.one)}
+                                onClick={() => this.props.purchaseItem(itemIds, 1, item.prices.one)}
                             >
-                                Hire {item.name} for {gameFunctions.formatScore(gameFunctions.calculateItemCostWithMultiplier(item))}
+                                Hire 1 for {gameFunctions.formatScore(item.prices.one)}
                             </button>
 
-                            <button disabled={(this.props.currentScore < buyfive)} onClick={() => this.props.purchaseItem(itemIds, 5, buyfive)}>Hire 5 for {gameFunctions.formatScore(buyfive)}</button>
-                            <button disabled={(this.props.currentScore < buyten)} onClick={() => this.props.purchaseItem(itemIds, 10, buyten)}>Hire 10 for {gameFunctions.formatScore(buyten)}</button>
-                            <button disabled={(this.props.currentScore < buyhundred)} onClick={() => this.props.purchaseItem(itemIds, 100, buyhundred)}>Hire 100 for {gameFunctions.formatScore(buyhundred)}</button>
-                            <button disabled={(max.amount < 1)} onClick={() => this.props.purchaseItem(itemIds, max.amount, max.cost)}>Hire {max.amount} for {gameFunctions.formatScore(max.cost)}</button>
+                            <button
+                                disabled={(this.props.currentScore < item.prices.five)}
+                                onClick={() => this.props.purchaseItem(itemIds, 5, item.prices.five)}
+                            >
+                                Hire 5 for {gameFunctions.formatScore(item.prices.five)}
+                            </button>
+                            <button
+                                disabled={(this.props.currentScore < item.prices.ten)}
+                                onClick={() => this.props.purchaseItem(itemIds, 10, item.prices.ten)}
+                            >
+                                Hire 10 for {gameFunctions.formatScore(item.prices.ten)}
+                            </button>
+                            <button
+                                disabled={(this.props.currentScore < item.prices.hundred)}
+                                onClick={() => this.props.purchaseItem(itemIds, 100, item.prices.hundred)}
+                            >
+                                Hire 100 for {gameFunctions.formatScore(item.prices.hundred)}
+                            </button>
+                            <button
+                                disabled={(max.amount < 1)}
+                                onClick={() => this.props.purchaseItem(itemIds, max.amount, max.cost)}
+                            >
+                                Hire {max.amount} for {gameFunctions.formatScore(max.cost)}
+                            </button>
                         </div>
 
 

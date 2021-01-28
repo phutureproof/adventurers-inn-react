@@ -12,6 +12,12 @@ export default class Item {
     manager;
     items;
     multipliers;
+    prices = {
+        one: 0.0,
+        five: 0.0,
+        ten: 0.0,
+        hundred: 0.0
+    };
 
     constructor(
         name = '',
@@ -34,5 +40,6 @@ export default class Item {
         this.manager = manager;
         this.multipliers = multipliers;
         this.items = items;
+        this.prices.one = baseCost;
     }
 }

@@ -182,17 +182,27 @@ class gameFunctionsClass {
         return items;
     }
 
+    calculateItemPrices(item) {
+        return {
+            one: gameFunctions.calculateBuyNItem(item, 1),
+            five: gameFunctions.calculateBuyNItem(item, 5),
+            ten: gameFunctions.calculateBuyNItem(item, 10),
+            hundred: gameFunctions.calculateBuyNItem(item, 100),
+        };
+    }
+
     /**
      * calculateBuyNItem
      * @param item {Item}
      * @param amount {number|string}
+     * @param currentScore {number}
      */
     calculateBuyNItem(item, amount, currentScore = 0) {
         if (typeof amount === 'number') {
             let quantity = item.quantity;
-            let count = Number(item.quantity) + amount;
-            let modifier = Number(item.costModifier);
-            let cost = Number(item.baseCost);
+            let count = item.quantity + amount;
+            let modifier = item.costModifier;
+            let cost = item.baseCost;
             let price = 0;
 
             for (let i = 0; i < count; i++) {
@@ -210,7 +220,10 @@ class gameFunctionsClass {
                 iterator += 1;
                 cost = price;
             }
-            return {
+            return ((iterator - 1) === 0) ? {
+                cost: price,
+                amount: 1
+            } : {
                 cost: cost,
                 amount: (iterator - 1)
             };

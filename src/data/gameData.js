@@ -1,5 +1,7 @@
 import Item from "../classes/Item";
 import ItemMultiplier from "../classes/ItemMultiplier"
+import gameFunctions from "../utilities/gameFunctions";
+
 /**
  * items
  * @type {Item[]}
@@ -26,6 +28,7 @@ function addProps(debug = false, items, startingIndex = 0) {
         }
         item.id = startingIndex++;
         item.canShow = false;
+        item.prices = gameFunctions.calculateItemPrices(item);
 
         if (item.items) {
             item.items = addProps(debug, item.items);
