@@ -14,17 +14,20 @@ export default class Game extends React.Component {
 
     /* timers */
     timers = {
-        /* dont change these */
-        salaryTimer: 0,
-        bonusTimer: 0,
-        saveTimer: 0,
         defaults: {
             /* change these */
             salaryTimer: 60, /* 1 minute */
             bonusTimer: 900, /* 15 minutes */
             saveTimer: 30, /* 30 seconds */
-        }
+        },
+        /* dont change these */
+        salaryTimer: 0,
+        bonusTimer: 0,
+        saveTimer: 0
     };
+
+    bonusActive = false;
+    bonusDoubled = false;
 
     /* Time in seconds to remove salary */
     salaryTime = 60;
@@ -60,6 +63,11 @@ export default class Game extends React.Component {
 
     constructor(props) {
         super(props);
+
+        this.timers.salaryTimer = this.timers.defaults.salaryTimer;
+        this.timers.bonusTimer = this.timers.defaults.bonusTimer;
+        this.timers.saveTimer = this.timers.defaults.saveTimer;
+
         this.tickLength = 1000 / this.FPS;
         this.state = this.initialState;
         this.doBindings();
@@ -197,18 +205,70 @@ export default class Game extends React.Component {
         }
     }
 
-    addGameData() {
-        this.setState({
-            items: gameData(this.debugGameData)
-        });
-    }
+    gameTimers() {
+        let timer;
+        let defaultTime;
 
-    tick() {
-        if (!this.salaryTimer && this.state.salary > 0) {
-            this.startSalaryTimer();
+        // salary timer
+        if (this.state.salary > 0) {
+            timer = this.timers.salaryTimer;
+            defaultTime = this.timers.defaults.salaryTimer;
+            if (timer === 0) {
+                this.takeSalary();
+                this.timers.salaryTimer = defaultTime;
+            } else {
+                this.timers.salaryTimer--;
+            }
+            if (this.debug) {
+                Logger.log({
+                    message: 'salary timer',
+                    value: this.timers.salaryTimer
+                });
+            }
         }
 
-        let newScore = Number(this.state.currentScore + ((this.state.perSecond * this.state.perSecondMultiplier) * this.tickLength) / 1000);
+        // bonus timer
+        if (this.bonusActive) {
+            timer = this.timers.bonusTimer;
+            defaultTime = this.timers.default.bonusTimer;
+
+            if (this.debug) {
+                Logger.log({
+                    message: 'bonus timer',
+                    value: this.timers.bonusTimer
+                });
+            }
+
+            if (timer === 0) {
+                this.bonusActive = false;
+                this.bonusDoubled = false;
+                this.timers.bonusTimer = defaultTime;
+            } else {
+                this.timers.bonusTimer--;
+            }
+        }
+
+        // auto save timer
+        timer = this.timers.saveTimer;
+        defaultTime = this.timers.defaults.saveTimer;
+
+        if (this.debug) {
+            Logger.log({
+                message: 'save timer',
+                value: this.timers.saveTimer
+            });
+        }
+
+        if (timer === 0) {
+            this.saveGame();
+            this.timers.saveTimer = defaultTime;
+        } else {
+            this.timers.saveTimer--;
+        }
+    }
+
+    perTickCalculations() {
+        let newScore = this.state.currentScore + (this.state.perSecond * this.state.perSecondMultiplier);
         let newMaxScore = newScore > this.state.maxScore ? newScore : this.state.maxScore;
         let items = gameFunctions.canShowItems(this.state.items, this.state.currentScore);
 
@@ -218,6 +278,11 @@ export default class Game extends React.Component {
             items: items,
             salary: gameFunctions.calculateSalary(this.state.perSecond)
         });
+    }
+
+    tick() {
+        this.gameTimers();
+        this.perTickCalculations();
     }
 
     defaultItemClickHandler() {
@@ -245,32 +310,13 @@ export default class Game extends React.Component {
     startTicking() {
         this.timer = setInterval(
             () => this.tick(),
-            this.tickLength
-        );
-        this.saveTimer = setInterval(
-            () => this.saveGame(),
-            (this.saveTime * 1000)
+            1000
         );
     }
 
     stopTicking() {
         clearInterval(this.timer);
-        clearInterval(this.saveTimer);
         this.timer = null;
-        this.saveTimer = null;
-    }
-
-    startSalaryTimer() {
-        let time = (this.salaryTime * 1000);
-        this.salaryTimer = setInterval(
-            () => this.takeSalary(),
-            time
-        )
-    }
-
-    stopSalaryTimer() {
-        clearInterval(this.salaryTimer);
-        this.salaryTime = null;
     }
 
     componentDidMount() {
@@ -295,7 +341,6 @@ export default class Game extends React.Component {
         window.removeEventListener("focus", this.onFocus);
         window.removeEventListener("blur", this.onBlur);
         this.stopTicking();
-        this.stopSalaryTimer();
     }
 
     onFocus() {
@@ -303,6 +348,7 @@ export default class Game extends React.Component {
             Logger.log("Gained Focus");
         }
         this.loadGame();
+
     }
 
     onBlur() {
@@ -310,13 +356,13 @@ export default class Game extends React.Component {
             Logger.log("Lost Focus");
         }
         this.saveGame();
+        this.stopTicking();
     }
 
     takeSalary() {
         let newScore = (this.state.currentScore - this.state.salary);
         if (newScore < 0) {
             this.stopTicking();
-            this.stopSalaryTimer();
             this.clearSaveData();
             this.setState({
                 gameOver: true
