@@ -15,10 +15,10 @@ export default class Game extends React.Component {
     /* timers */
     timers = {
         defaults: {
-            /* change these */
-            salaryTimer: 60, /* 1 minute */
-            bonusTimer: 900, /* 15 minutes */
-            saveTimer: 30, /* 30 seconds */
+            /* change these (values are time in seconds) */
+            salaryTimer: 60,
+            bonusTimer: 900,
+            saveTimer: 300,
         },
         /* dont change these */
         salaryTimer: 0,
@@ -34,7 +34,7 @@ export default class Game extends React.Component {
     /* gameData debug mode */
     debugGameData = false;
     /* debug click default item (false|integer)*/
-    debugClickDefaultItem = false;
+    debugClickDefaultItem = 100;
     /* globalise game to the window : allows console access to game */
     globalGame = false;
 
@@ -103,6 +103,8 @@ export default class Game extends React.Component {
                 defaultItemClickHandler={this.defaultItemClickHandler}
                 defaultItemClicks={this.state.defaultItemClicks}
                 debugClickDefaultItem={this.debugClickDefaultItem}
+                saveGame={this.saveGame}
+                clearSaveData={this.clearSaveData}
             />
             :
             <div className="gameOver">
@@ -116,37 +118,37 @@ export default class Game extends React.Component {
                 <button onClick={() => gameFunctions.restartGame()}>Restart</button>
             </div>
 
-        const buttons = <div className="buttons">
-            <button onClick={() => this.saveGame()}>Save Game</button>
-            <button onClick={() => this.loadGame()}>Load Game</button>
-            <button onClick={() => {
-                if(window.confirm("Clear your data and reload?")) {
-                    this.clearSaveData();
-                    gameFunctions.restartGame();
-                }
-            }}>Clear Game Save Data
-            </button>
-        </div> ;
-
         return (
             <div className="game">
                 {markup}
-
             </div>
         );
     }
 
+    clearSaveData() {
+        Cookie.remove("gameState");
+        Cookie.remove('gameTimers');
+        if (this.debug) {
+            Logger.log({
+                message: 'Clearing saved game data'
+            });
+        }
+    }
+
     saveGame() {
         let saveData = {...this.state};
-        saveData.timers = {...this.timers};
+        let timers = {...this.timers};
         saveData.timestamp = Date.now();
+        Cookie.set('gameTimers', timers, {expires: 365})
         Cookie.set('gameState', saveData, {expires: 365});
+        this.props.showToast('Game saved', 'info');
         if (this.debug) {
             Logger.log({
                 message: 'Saving game state',
                 saveData: saveData
             });
         }
+
     }
 
     loadGame(showToast = false) {
@@ -157,8 +159,7 @@ export default class Game extends React.Component {
         let defaultItems = gameData(this.debugGameData);
         this.mapItemMultipliers(defaultItems, state.items);
         state.items = gameFunctions.calculateItemMultipliers(state.items);
-        this.timers = {...state.timers};
-        delete state.timers;
+
         let date = Date.now();
         let diff = Math.floor((date - state.timestamp) / 1000);
         let toAdd = (state.perSecond * state.perSecondMultiplier) * diff;
@@ -185,6 +186,9 @@ export default class Game extends React.Component {
             let toastMessage = <p>Your staff earned {score} while you were away!</p>;
             this.props.showToast(toastMessage, 'success');
         }
+
+        let timers = Cookie.getJSON('gameTimers');
+        this.timers = timers;
     }
 
     mapItemMultipliers(defaultItems, stateItems) {
@@ -204,14 +208,7 @@ export default class Game extends React.Component {
         });
     }
 
-    clearSaveData() {
-        Cookie.remove("gameState");
-        if (this.debug) {
-            Logger.log({
-                message: 'Clearing saved game data'
-            });
-        }
-    }
+
 
     gameTimers() {
         let timer;
@@ -421,8 +418,6 @@ export default class Game extends React.Component {
             }, () => {
                 this.setState({
                     perSecond: gameFunctions.calculatePerSecond(this.state.items),
-                }, () => {
-                    this.saveGame();
                 });
             });
         }

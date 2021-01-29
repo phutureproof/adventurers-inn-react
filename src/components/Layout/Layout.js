@@ -5,6 +5,7 @@ import Score from "../Score/Score";
 import Salary from "../Salary/Salary";
 import DefaultItemButton from "../DefaultItemButton/DefaultItemButton";
 import './layout.scss';
+import gameFunctions from "../../utilities/gameFunctions";
 
 export default class Layout extends React.Component {
     render() {
@@ -56,7 +57,12 @@ export default class Layout extends React.Component {
                     />
                 </div>
                 <div className="footer">
-                    <h2>&copy; PhutureProof 2021 Version: {this.props.version}</h2>
+                    <h2>
+                        <span style={{float: 'left'}}>
+                            <button onClick={() => this.props.saveGame()}>Save Game</button>
+                            <button onClick={() => {this.props.clearSaveData(); gameFunctions.restartGame();}}>Clear Save &amp; Restart</button>
+                        </span>
+                        &copy; PhutureProof 2021 Version: {this.props.version}</h2>
                 </div>
             </div>
         );
