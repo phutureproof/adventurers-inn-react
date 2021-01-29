@@ -126,8 +126,8 @@ export default class Game extends React.Component {
     }
 
     clearSaveData() {
-        Cookie.remove("gameState");
-        Cookie.remove('gameTimers');
+        let storage = window.localStorage;
+        storage.removeItem('gameData');
         if (this.debug) {
             Logger.log({
                 message: 'Clearing saved game data'
@@ -136,11 +136,10 @@ export default class Game extends React.Component {
     }
 
     saveGame() {
+        let storage = window.localStorage;
         let saveData = {...this.state};
-        let timers = {...this.timers};
         saveData.timestamp = Date.now();
-        Cookie.set('gameTimers', timers, {expires: 365})
-        Cookie.set('gameState', saveData, {expires: 365});
+        storage.setItem('gameData', JSON.stringify(saveData));
         this.props.showToast('Game saved', 'info');
         if (this.debug) {
             Logger.log({
@@ -152,10 +151,12 @@ export default class Game extends React.Component {
     }
 
     loadGame(showToast = false) {
-        let state = Cookie.getJSON('gameState');
+        let storage = window.localStorage;
+        let state = JSON.parse(storage.getItem('gameData'));
         if (!state) {
             return;
         }
+        console.log(state);
         let defaultItems = gameData(this.debugGameData);
         this.mapItemMultipliers(defaultItems, state.items);
         state.items = gameFunctions.calculateItemMultipliers(state.items);
@@ -187,8 +188,6 @@ export default class Game extends React.Component {
             this.props.showToast(toastMessage, 'success');
         }
 
-        let timers = Cookie.getJSON('gameTimers');
-        this.timers = timers;
     }
 
     mapItemMultipliers(defaultItems, stateItems) {
