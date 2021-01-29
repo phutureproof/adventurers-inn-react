@@ -8,7 +8,6 @@ import './layout.scss';
 
 export default class Layout extends React.Component {
     render() {
-
         const stats = this.props.debug ?
             <Stats
                 FPS={this.props.FPS}
@@ -29,7 +28,7 @@ export default class Layout extends React.Component {
                 <div className="header">
                     <h1>{this.props.title}</h1>
                 </div>
-                <div className="left">
+                <div className="stats">
                     {stats}
                 </div>
 
@@ -56,7 +55,9 @@ export default class Layout extends React.Component {
                         purchaseItem={this.props.purchaseItem}
                     />
                 </div>
-                <div className="footer"><h2>Version: {this.props.version}</h2></div>
+                <div className="footer">
+                    <h2>&copy; PhutureProof 2021 Version: {this.props.version}</h2>
+                </div>
             </div>
         );
     }

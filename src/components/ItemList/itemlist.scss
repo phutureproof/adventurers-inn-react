@@ -1,54 +1,57 @@
 .itemlist {
 
-    ul {
-        margin: 0;
+  ul {
+    margin: 0;
+    padding: 0;
+
+    li {
+
+      list-style: none;
+      margin: 0;
+      padding: 0;
+
+      .hidden {
+        display: none;
+      }
+
+      p {
         padding: 0;
+        text-align: center;
+        font-size: 18px;
+        font-weight: bold;
+        text-shadow: 2px 2px 2px black;
+        color: #ec8b1e;
+      }
 
-        li {
+      button {
+        box-sizing: border-box;
+        padding: 5px;
+        margin: 0;
+        width: 100%;
+        overflow: hidden;
+        transition: all 0.5s
+      }
 
-            list-style: none;
-            margin: 0;
-            padding: 0;
+      .multipliers {
+        background-color: #67210c;
 
-            .hidden {
-                display: none;
-            }
-
-            p {
-                padding: 10px 10px;
-                text-align: center;
-                font-size: 18px;
-                font-weight: bold;
-                text-shadow: 2px 2px 2px black;
-                color: #ec8b1e;
-            }
-
-            button {
-                box-sizing: border-box;
-                padding: 10px;
-                margin: 0;
-                width: 100%;
-                overflow: hidden;
-                transition: all 0.5s
-            }
-
-            .multipliers {
-                background-color: #67210c;
-
-                p {
-                    font-size: 13px;
-                    color: #e3af4a;
-                    margin: 0 10px;
-                }
-            }
-
-            .buyButtons {
-
-                button {
-                    display: inline-block;
-                    width: (100% / 5);
-                }
-            }
+        p {
+          font-size: 13px;
+          color: #e3af4a;
+          margin: 0 10px;
         }
+      }
+
+      .buyButtons {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+
+        button {
+          display: inline-block;
+          grid-column: auto;
+          grid-row: 1;
+        }
+      }
     }
+  }
 }

@@ -50,7 +50,7 @@ export default class Game extends React.Component {
         defaultItemClicks: 0,
         perSecond: 0.0,
         perSecondMultiplier: 1.0,
-        currentScore: 1000.0,
+        currentScore: 0.0,
         maxScore: 0.0,
         salary: 0.0,
         gameOver: false,
@@ -116,19 +116,22 @@ export default class Game extends React.Component {
                 <button onClick={() => gameFunctions.restartGame()}>Restart</button>
             </div>
 
+        const buttons = <div className="buttons">
+            <button onClick={() => this.saveGame()}>Save Game</button>
+            <button onClick={() => this.loadGame()}>Load Game</button>
+            <button onClick={() => {
+                if(window.confirm("Clear your data and reload?")) {
+                    this.clearSaveData();
+                    gameFunctions.restartGame();
+                }
+            }}>Clear Game Save Data
+            </button>
+        </div> ;
+
         return (
             <div className="game">
                 {markup}
 
-                <button onClick={() => this.saveGame()}>Save Game</button>
-                <button onClick={() => this.loadGame()}>Load Game</button>
-                <button onClick={() => {
-                    if(window.confirm("Clear your data and reload?")) {
-                        this.clearSaveData();
-                        gameFunctions.restartGame();
-                    }
-                }}>Clear Game Save Data
-                </button>
             </div>
         );
     }
@@ -178,7 +181,8 @@ export default class Game extends React.Component {
         }
 
         if(showToast && toAdd > 0) {
-            let toastMessage = `Your staff earned ${gameFunctions.formatScore(toAdd)} while you were away!`;
+            let score = <span className="score">{gameFunctions.formatScore(toAdd)}</span>
+            let toastMessage = <p>Your staff earned {score} while you were away!</p>;
             this.props.showToast(toastMessage, 'success');
         }
     }
@@ -417,6 +421,8 @@ export default class Game extends React.Component {
             }, () => {
                 this.setState({
                     perSecond: gameFunctions.calculatePerSecond(this.state.items),
+                }, () => {
+                    this.saveGame();
                 });
             });
         }

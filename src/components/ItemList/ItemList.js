@@ -1,23 +1,23 @@
 import React from "react";
-import './itemlist.scss';
 import gameFunctions from "../../utilities/gameFunctions";
+import './itemlist.scss';
 
 export default class ItemList extends React.Component {
 
     pluralise(word, amount) {
-        if(word === 'Barstaff') {
+        if (word === 'Barstaff') {
             return word;
         }
         return (amount === 0 || amount > 1) ? word + 's' : word;
     }
 
     multipliers(item) {
-        if(!item.multipliers) {
+        if (!item.multipliers) {
             return;
         }
         return item.multipliers.map((multiplier, index) => {
-            if(multiplier.active) {
-                return(
+            if (multiplier.active) {
+                return (
                     <p key={index}>{multiplier.label}</p>
                 );
             }
@@ -33,38 +33,38 @@ export default class ItemList extends React.Component {
             return (
                 <li key={item.id} className={item.canShow ? '' : 'hidden'}>
                     <div className="itemContainer">
-                        <p>{item.quantity} {this.pluralise(item.name, item.quantity)} generating {gameFunctions.formatNumber((item.quantity * item.perSecond) * item.perSecondMultiplier)} per second</p>
+                        <p>{item.quantity} {this.pluralise(item.name, item.quantity)} @ {gameFunctions.formatNumber((item.quantity * item.perSecond) * item.perSecondMultiplier)} per second</p>
                         <div className="buyButtons">
                             <button
                                 disabled={(this.props.currentScore < item.prices.one)}
                                 onClick={() => this.props.purchaseItem(itemIds, 1, item.prices.one)}
                             >
-                                Hire 1<br />{gameFunctions.formatScore(item.prices.one)}
+                                Hire 1<br/>{gameFunctions.formatScore(item.prices.one)}
                             </button>
 
                             <button
                                 disabled={(this.props.currentScore < item.prices.five)}
                                 onClick={() => this.props.purchaseItem(itemIds, 5, item.prices.five)}
                             >
-                                Hire 5<br />{gameFunctions.formatScore(item.prices.five)}
+                                Hire 5<br/>{gameFunctions.formatScore(item.prices.five)}
                             </button>
                             <button
                                 disabled={(this.props.currentScore < item.prices.ten)}
                                 onClick={() => this.props.purchaseItem(itemIds, 10, item.prices.ten)}
                             >
-                                Hire 10<br />{gameFunctions.formatScore(item.prices.ten)}
+                                Hire 10<br/>{gameFunctions.formatScore(item.prices.ten)}
                             </button>
                             <button
                                 disabled={(this.props.currentScore < item.prices.hundred)}
                                 onClick={() => this.props.purchaseItem(itemIds, 100, item.prices.hundred)}
                             >
-                                Hire 100<br />{gameFunctions.formatScore(item.prices.hundred)}
+                                Hire 100<br/>{gameFunctions.formatScore(item.prices.hundred)}
                             </button>
                             <button
                                 disabled={(this.props.currentScore < max.cost)}
                                 onClick={() => this.props.purchaseItem(itemIds, max.amount, max.cost)}
                             >
-                                Hire {max.amount}<br />{gameFunctions.formatScore(max.cost)}
+                                Hire {max.amount}<br/>{gameFunctions.formatScore(max.cost)}
                             </button>
                         </div>
 

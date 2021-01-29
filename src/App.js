@@ -1,7 +1,7 @@
 import React from "react";
-import './App.scss';
 import Game from "./components/Game/Game";
 import { ToastContainer, toast} from "react-toastify";
+import './App.scss';
 import 'react-toastify/dist/ReactToastify.css';
 
 export default class App extends React.Component {
