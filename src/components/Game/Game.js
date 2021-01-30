@@ -5,8 +5,6 @@ import Logger from "../../utilities/Logger";
 import gameData from "../../data/gameData";
 import './game.scss';
 
-let Cookie = require('js-cookie');
-
 export default class Game extends React.Component {
 
     /* Frames Per Second */
@@ -26,15 +24,12 @@ export default class Game extends React.Component {
         saveTimer: 0
     };
 
-    bonusActive = false;
-    bonusDoubled = false;
-
     /* debug mode */
     debug = false;
     /* gameData debug mode */
     debugGameData = false;
     /* debug click default item (false|integer)*/
-    debugClickDefaultItem = 100;
+    debugClickDefaultItem = false;
     /* globalise game to the window : allows console access to game */
     globalGame = false;
 
@@ -54,15 +49,15 @@ export default class Game extends React.Component {
         maxScore: 0.0,
         salary: 0.0,
         gameOver: false,
-        items: []
+        items: [],
+        bonusActive: false,
+        bonusStarted: false,
+        bonusDoubled: false,
+        bonusMultiplier: 1
     };
 
     constructor(props) {
         super(props);
-
-        this.timers.salaryTimer = this.timers.defaults.salaryTimer;
-        this.timers.bonusTimer = this.timers.defaults.bonusTimer;
-        this.timers.saveTimer = this.timers.defaults.saveTimer;
 
         this.tickLength = 1000 / this.FPS;
         this.state = this.initialState;
@@ -80,6 +75,7 @@ export default class Game extends React.Component {
         this.clearSaveData = this.clearSaveData.bind(this);
         this.onFocus = this.onFocus.bind(this);
         this.onBlur = this.onBlur.bind(this);
+        this.adHandler = this.adHandler.bind(this);
     }
 
     render() {
@@ -105,6 +101,7 @@ export default class Game extends React.Component {
                 debugClickDefaultItem={this.debugClickDefaultItem}
                 saveGame={this.saveGame}
                 clearSaveData={this.clearSaveData}
+                adHandler={this.adHandler}
             />
             :
             <div className="gameOver">
@@ -125,6 +122,14 @@ export default class Game extends React.Component {
         );
     }
 
+    adHandler(multiplier = 1, doubled = false) {
+        this.setState({
+            bonusActive: true,
+            bonusDoubled: doubled,
+            bonusMultiplier: multiplier,
+        });
+    }
+
     clearSaveData() {
         let storage = window.localStorage;
         storage.removeItem('gameData');
@@ -135,12 +140,15 @@ export default class Game extends React.Component {
         }
     }
 
-    saveGame() {
+    saveGame(showToast = false) {
         let storage = window.localStorage;
         let saveData = {...this.state};
+        saveData.timers = {...this.timers};
         saveData.timestamp = Date.now();
         storage.setItem('gameData', JSON.stringify(saveData));
-        this.props.showToast('Game saved', 'info');
+        if (showToast) {
+            this.props.showToast('Game saved', 'info');
+        }
         if (this.debug) {
             Logger.log({
                 message: 'Saving game state',
@@ -153,10 +161,12 @@ export default class Game extends React.Component {
     loadGame(showToast = false) {
         let storage = window.localStorage;
         let state = JSON.parse(storage.getItem('gameData'));
+        this.timers = {...state.timers};
+        delete state.timers;
         if (!state) {
             return;
         }
-        console.log(state);
+
         let defaultItems = gameData(this.debugGameData);
         this.mapItemMultipliers(defaultItems, state.items);
         state.items = gameFunctions.calculateItemMultipliers(state.items);
@@ -182,7 +192,7 @@ export default class Game extends React.Component {
             Logger.log(state);
         }
 
-        if(showToast && toAdd > 0) {
+        if (showToast && toAdd > 0) {
             let score = <span className="score">{gameFunctions.formatScore(toAdd)}</span>
             let toastMessage = <p>Your staff earned {score} while you were away!</p>;
             this.props.showToast(toastMessage, 'success');
@@ -208,7 +218,6 @@ export default class Game extends React.Component {
     }
 
 
-
     gameTimers() {
         let timer;
         let defaultTime;
@@ -232,9 +241,7 @@ export default class Game extends React.Component {
         }
 
         // bonus timer
-        if (this.bonusActive) {
-            timer = this.timers.bonusTimer;
-            defaultTime = this.timers.default.bonusTimer;
+        if (this.state.bonusActive) {
 
             if (this.debug) {
                 Logger.log({
@@ -244,9 +251,12 @@ export default class Game extends React.Component {
             }
 
             if (timer === 0) {
-                this.bonusActive = false;
-                this.bonusDoubled = false;
-                this.timers.bonusTimer = defaultTime;
+                this.setState({
+                    bonusActive: false,
+                    bonusDoubled: false,
+                    bonusMultiplier: 1
+                });
+                this.timers.bonusTimer = this.timers.defaults.bonusTimer;
             } else {
                 this.timers.bonusTimer--;
             }
@@ -272,7 +282,13 @@ export default class Game extends React.Component {
     }
 
     perTickCalculations() {
-        let newScore = this.state.currentScore + (this.state.perSecond * this.state.perSecondMultiplier);
+        let newScore = (this.state.perSecond * this.state.perSecondMultiplier) * this.state.bonusMultiplier;
+        if (this.state.bonusActive) {
+            let bonusDoubled = (this.state.bonusDoubled) ? 2 : 1;
+            newScore *= bonusDoubled;
+        }
+        newScore += this.state.currentScore;
+
         let newMaxScore = newScore > this.state.maxScore ? newScore : this.state.maxScore;
         let items = gameFunctions.canShowItems(this.state.items, this.state.currentScore);
 
@@ -290,14 +306,20 @@ export default class Game extends React.Component {
     }
 
     defaultItemClickHandler() {
-        let multiplier = 1;
+        let amount = 1;
 
         if (this.debugClickDefaultItem) {
-            multiplier = this.debugClickDefaultItem;
+            amount = this.debugClickDefaultItem;
         }
 
-        let newScore = (this.state.currentScore + multiplier);
-        let clicks = (this.state.defaultItemClicks + multiplier);
+        amount *= this.state.bonusMultiplier;
+        if(this.state.bonusActive) {
+            let bonusMultiplier = (this.state.bonusDoubled) ? 2 : 1;
+            amount *= bonusMultiplier;
+        }
+
+        let newScore = (this.state.currentScore + amount);
+        let clicks = (this.state.defaultItemClicks + amount);
 
         this.setState({
             currentScore: newScore,
@@ -326,7 +348,8 @@ export default class Game extends React.Component {
     componentDidMount() {
         window.addEventListener("focus", this.onFocus);
         window.addEventListener("blur", this.onBlur);
-        if (Cookie.getJSON("gameState")) {
+        let storage = window.localStorage;
+        if (storage.getItem('gameData')) {
             this.loadGame(true);
         } else {
             this.setState({

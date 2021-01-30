@@ -59,8 +59,8 @@ export default class Layout extends React.Component {
                 <div className="footer">
                     <h2>
                         <span style={{float: 'left'}}>
-                            <button onClick={() => this.props.saveGame()}>Save Game</button>
-                            <button onClick={() => {this.props.clearSaveData(); gameFunctions.restartGame();}}>Clear Save &amp; Restart</button>
+                            <button onClick={() => this.props.saveGame(true)}>Save Game</button>
+                            <button onClick={() => {if(window.confirm("Clear data and reload?!")) {this.props.clearSaveData(); gameFunctions.restartGame();}} }>Clear Save &amp; Restart</button>
                         </span>
                         &copy; PhutureProof 2021 Version: {this.props.version}</h2>
                 </div>
