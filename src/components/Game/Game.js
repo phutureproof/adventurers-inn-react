@@ -4,6 +4,9 @@ import Logger from "../../utilities/Logger";
 import gameData from "../../data/gameData";
 import Layout from "../../views/Layout/Layout";
 import GameOver from "../../views/GameOver/GameOver";
+import Lore from "../../views/Lore/Lore";
+import About from "../../views/About/About";
+import Contact from "../../views/Contact/Contact";
 import "./game.scss";
 
 export default class Game extends React.Component {
@@ -134,8 +137,18 @@ export default class Game extends React.Component {
                     />
                 break;
             case this.views.lore:
+                markup =
+                    <Lore
+                        item={this.state.items}
+                    />
+                ;
+                break;
             case this.views.about:
+                markup = <About />;
+                break;
             case this.views.contact:
+                markup = <Contact />
+                break;
             case this.views.advert:
                 markup =
                     <div>
