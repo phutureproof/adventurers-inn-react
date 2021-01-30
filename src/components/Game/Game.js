@@ -7,6 +7,7 @@ import GameOver from "../../views/GameOver/GameOver";
 import Lore from "../../views/Lore/Lore";
 import About from "../../views/About/About";
 import Contact from "../../views/Contact/Contact";
+import Advert from "../../views/Advert/Advert";
 import "./game.scss";
 
 export default class Game extends React.Component {
@@ -64,10 +65,10 @@ export default class Game extends React.Component {
         gameOver: false,
         items: [],
         bonusActive: false,
-        bonusStarted: false,
         bonusDoubled: false,
         bonusMultiplier: 1,
-        view: this.views.layout
+        view: this.views.layout,
+        timers: {}
     };
 
     constructor(props) {
@@ -134,12 +135,13 @@ export default class Game extends React.Component {
                         maxScore={this.state.maxScore}
                         perSecond={this.state.perSecond}
                         defaultItemClicks={this.state.defaultItemClicks}
+                        items={this.state.items}
                     />
                 break;
             case this.views.lore:
                 markup =
                     <Lore
-                        item={this.state.items}
+                        items={this.state.items}
                     />
                 ;
                 break;
@@ -151,9 +153,9 @@ export default class Game extends React.Component {
                 break;
             case this.views.advert:
                 markup =
-                    <div>
-                        <p>Awaiting Content!</p>
-                    </div>
+                    <Advert
+                        adHandler={this.adHandler}
+                    />
                 break;
         }
 
@@ -179,10 +181,12 @@ export default class Game extends React.Component {
 
     adHandler(multiplier = 1, doubled = false) {
         this.setState({
+            view: this.views.layout,
             bonusActive: true,
             bonusDoubled: doubled,
             bonusMultiplier: multiplier,
         });
+        this.timers.bonusTimer = this.timers.defaults.bonusTimer;
     }
 
     clearSaveData() {
@@ -216,11 +220,11 @@ export default class Game extends React.Component {
     loadGame(showToast = false) {
         let storage = window.localStorage;
         let state = JSON.parse(storage.getItem('gameData'));
-        this.timers = {...state.timers};
-        delete state.timers;
         if (!state) {
             return;
         }
+        this.timers = {...state.timers};
+        delete state.timers;
 
         let defaultItems = gameData(this.debugGameData);
         this.mapItemMultipliers(defaultItems, state.items);
@@ -329,11 +333,14 @@ export default class Game extends React.Component {
         }
 
         if (timer === 0) {
+            this.setState({bonusActive: false});
             this.saveGame();
             this.timers.saveTimer = defaultTime;
         } else {
             this.timers.saveTimer--;
         }
+
+        this.setState({timers: {...this.timers}});
     }
 
     perTickCalculations() {

@@ -1,0 +1,19 @@
+.advert {
+
+  padding: 0 10px;
+  color: chocolate;
+
+  form {
+    .group {
+      margin: 5px;
+
+      label {
+        display: inline-block;
+        width: 150px;
+        text-align: right;
+        margin-right: 10px;
+        font-weight: bold;
+      }
+    }
+  }
+}
