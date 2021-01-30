@@ -1,3 +1,34 @@
 .game {
   padding: 0;
+
+  .appTitle {
+
+    background-color: #612203;
+
+    h1 {
+      margin: 0;
+      font-size: 45px;
+      color: #ee6206;
+      text-shadow: 3px 3px 10px black;
+      text-align: center;
+    }
+  }
+
+  .navigation {
+    margin: 0;
+    padding: 0;
+
+    button {
+      outline: none;
+      box-sizing: border-box;
+      background-color: white;
+      color: #333;
+      padding: 2px;
+      width: calc(100% / 6);
+    }
+  }
+
+  .view {
+
+  }
 }

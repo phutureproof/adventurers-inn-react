@@ -1,9 +1,10 @@
 import React from "react";
-import Layout from "../Layout/Layout";
 import gameFunctions from '../../utilities/gameFunctions';
 import Logger from "../../utilities/Logger";
 import gameData from "../../data/gameData";
-import './game.scss';
+import Layout from "../../views/Layout/Layout";
+import GameOver from "../../views/GameOver/GameOver";
+import "./game.scss";
 
 export default class Game extends React.Component {
 
@@ -33,6 +34,15 @@ export default class Game extends React.Component {
     /* globalise game to the window : allows console access to game */
     globalGame = false;
 
+    views = {
+        layout: 'layout',
+        gameover: 'gameover',
+        advert: 'advert',
+        lore: 'lore',
+        about: 'about',
+        contact: 'contact'
+    }
+
     /* Auto calculated */
     tickLength;
     timer;
@@ -53,7 +63,8 @@ export default class Game extends React.Component {
         bonusActive: false,
         bonusStarted: false,
         bonusDoubled: false,
-        bonusMultiplier: 1
+        bonusMultiplier: 1,
+        view: this.views.layout
     };
 
     constructor(props) {
@@ -76,48 +87,79 @@ export default class Game extends React.Component {
         this.onFocus = this.onFocus.bind(this);
         this.onBlur = this.onBlur.bind(this);
         this.adHandler = this.adHandler.bind(this);
+        this.changeView = this.changeView.bind(this);
+    }
+
+    changeView(view) {
+        this.setState({view: view});
     }
 
     render() {
-        const markup = !this.state.gameOver ?
-            <Layout
-                title={this.props.title}
-                version={this.props.version}
-                debug={this.debug}
-                FPS={this.FPS}
-                tickLength={this.tickLength}
-                perSecond={this.state.perSecond}
-                perSecondMultiplier={this.state.perSecondMultiplier}
-                currentScore={this.state.currentScore}
-                maxScore={this.state.maxScore}
-                salary={this.state.salary}
-                salaryTime={this.timers.defaults.salaryTime}
-                salaryTimer={this.timers.salaryTimer}
-                gameOver={this.state.gameOver}
-                items={this.state.items}
-                purchaseItem={this.purchaseItem}
-                defaultItemClickHandler={this.defaultItemClickHandler}
-                defaultItemClicks={this.state.defaultItemClicks}
-                debugClickDefaultItem={this.debugClickDefaultItem}
-                saveGame={this.saveGame}
-                clearSaveData={this.clearSaveData}
-                adHandler={this.adHandler}
-            />
-            :
-            <div className="gameOver">
-                <h1>Game Over!</h1>
-                <p>Game Stats:</p>
-                <ul>
-                    <li>Max Wealth Achieved: {gameFunctions.formatScore(this.state.maxScore)}.</li>
-                    <li>Max Income: {gameFunctions.formatScore(this.state.perSecond)} per second.</li>
-                    <li>Number of Pints Pulled: {gameFunctions.formatInteger(this.state.defaultItemClicks)}.</li>
-                </ul>
-                <button onClick={() => gameFunctions.restartGame()}>Restart</button>
-            </div>
+        let markup;
+        switch (this.state.view) {
+            case this.views.layout:
+            default:
+                markup =
+                    <Layout
+                        title={this.props.title}
+                        version={this.props.version}
+                        debug={this.debug}
+                        FPS={this.FPS}
+                        tickLength={this.tickLength}
+                        perSecond={this.state.perSecond}
+                        perSecondMultiplier={this.state.perSecondMultiplier}
+                        currentScore={this.state.currentScore}
+                        maxScore={this.state.maxScore}
+                        salary={this.state.salary}
+                        salaryTime={this.timers.defaults.salaryTime}
+                        salaryTimer={this.timers.salaryTimer}
+                        gameOver={this.state.gameOver}
+                        items={this.state.items}
+                        purchaseItem={this.purchaseItem}
+                        defaultItemClickHandler={this.defaultItemClickHandler}
+                        defaultItemClicks={this.state.defaultItemClicks}
+                        debugClickDefaultItem={this.debugClickDefaultItem}
+                        saveGame={this.saveGame}
+                        clearSaveData={this.clearSaveData}
+                        adHandler={this.adHandler}
+                    />
+                break;
+
+            case this.views.gameover:
+                markup =
+                    <GameOver
+                        maxScore={this.state.maxScore}
+                        perSecond={this.state.perSecond}
+                        defaultItemClicks={this.state.defaultItemClicks}
+                    />
+                break;
+            case this.views.lore:
+            case this.views.about:
+            case this.views.contact:
+            case this.views.advert:
+                markup =
+                    <div>
+                        <p>Awaiting Content!</p>
+                    </div>
+                break;
+        }
 
         return (
             <div className="game">
-                {markup}
+                <div className="appTitle">
+                    <h1>{this.props.title}</h1>
+                </div>
+                <div className="navigation">
+                    <button onClick={() => this.changeView(this.views.layout)}>Home</button>
+                    <button onClick={() => this.changeView(this.views.gameover)}>Game Over</button>
+                    <button onClick={() => this.changeView(this.views.lore)}>Lore</button>
+                    <button onClick={() => this.changeView(this.views.about)}>About</button>
+                    <button onClick={() => this.changeView(this.views.contact)}>Contact</button>
+                    <button onClick={() => this.changeView(this.views.advert)}>Advert</button>
+                </div>
+                <div className="view">
+                    {markup}
+                </div>
             </div>
         );
     }
@@ -313,7 +355,7 @@ export default class Game extends React.Component {
         }
 
         amount *= this.state.bonusMultiplier;
-        if(this.state.bonusActive) {
+        if (this.state.bonusActive) {
             let bonusMultiplier = (this.state.bonusDoubled) ? 2 : 1;
             amount *= bonusMultiplier;
         }

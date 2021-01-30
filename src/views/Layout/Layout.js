@@ -1,9 +1,9 @@
 import React from "react";
-import Stats from "../Stats/Stats";
-import ItemList from "../ItemList/ItemList";
-import Score from "../Score/Score";
-import Salary from "../Salary/Salary";
-import DefaultItemButton from "../DefaultItemButton/DefaultItemButton";
+import Stats from "../../components/Stats/Stats";
+import ItemList from "../../components/ItemList/ItemList";
+import Score from "../../components/Score/Score";
+import Salary from "../../components/Salary/Salary";
+import DefaultItemButton from "../../components/DefaultItemButton/DefaultItemButton";
 import './layout.scss';
 import gameFunctions from "../../utilities/gameFunctions";
 
@@ -26,9 +26,6 @@ export default class Layout extends React.Component {
 
         return (
             <div className="layout">
-                <div className="header">
-                    <h1>{this.props.title}</h1>
-                </div>
                 <div className="stats">
                     {stats}
                 </div>

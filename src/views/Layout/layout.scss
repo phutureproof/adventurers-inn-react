@@ -1,22 +1,10 @@
 .layout {
 
   display: grid;
-  grid-template-rows: auto auto 1fr auto;
-  height: 100vh;
+  grid-template-rows: auto 1fr auto;
+  height: calc(90vh - 25px);
 
-  .header {
 
-    background-color: #612203;
-    grid-row: 1;
-
-    h1 {
-      margin: 0;
-      font-size: 45px;
-      color: #ee6206;
-      text-shadow: 3px 3px 10px black;
-      text-align: center;
-    }
-  }
 
   .stats {
     background-color: #333;
@@ -24,11 +12,11 @@
   }
 
   .scoreContainer {
-    grid-row: 2;
+    grid-row: 1;
   }
 
   .items {
-    grid-row: 3;
+    grid-row: 2;
     padding: 10px;
     border: none;
     border-top: 1px solid #e3af4a;
@@ -40,7 +28,7 @@
   }
 
   .footer {
-    grid-row: 4;
+    grid-row: 3;
     background-color: #4c1a08;
     color: black;
 
