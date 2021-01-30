@@ -6,7 +6,7 @@ export default class Advert extends React.Component {
         super(props);
         this.state = {
             bonusAmount: 1,
-            bonusMultiplier: 1
+            bonusMultiplier: false
         };
         this.selectBonusAmount = this.selectBonusAmount.bind(this);
         this.selectBonusMultiplier = this.selectBonusMultiplier.bind(this);
@@ -14,12 +14,15 @@ export default class Advert extends React.Component {
     }
 
     selectBonusAmount(e) {
-        this.setState({bonusAmount: Number(e.target.value)});
+        this.setState({
+            bonusAmount: Number(e.target.value)
+        });
     }
 
     selectBonusMultiplier(e) {
-        let bonusMultiplier = (e.target.value === 'yes');
-        this.setState({bonusMultiplier: bonusMultiplier});
+        this.setState({
+            bonusMultiplier: (e.target.value === 'true')
+        });
     }
 
     handleSubmit() {
@@ -43,7 +46,7 @@ export default class Advert extends React.Component {
                     </div>
                     <div className="group">
                         <label>Bonus Doubled:</label>
-                        <select name="bonus" id="bonus">
+                        <select name="bonus" id="bonus" onChange={this.selectBonusMultiplier}>
                             <option value="false">No</option>
                             <option value="true">Yes</option>
                         </select>

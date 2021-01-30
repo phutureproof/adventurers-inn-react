@@ -59,7 +59,7 @@ export default class Game extends React.Component {
         defaultItemClicks: 0,
         perSecond: 0.0,
         perSecondMultiplier: 1.0,
-        currentScore: 0.0,
+        currentScore: 0,
         maxScore: 0.0,
         salary: 0.0,
         gameOver: false,
@@ -109,6 +109,9 @@ export default class Game extends React.Component {
                         version={this.props.version}
                         debug={this.debug}
                         FPS={this.FPS}
+                        bonusActive={this.state.bonusActive}
+                        bonusMultiplier={this.state.bonusMultiplier}
+                        bonusDoubled={this.state.bonusDoubled}
                         tickLength={this.tickLength}
                         perSecond={this.state.perSecond}
                         perSecondMultiplier={this.state.perSecondMultiplier}
@@ -180,13 +183,15 @@ export default class Game extends React.Component {
     }
 
     adHandler(multiplier = 1, doubled = false) {
+        this.timers.bonusTimer = (multiplier > 1) ? this.timers.defaults.bonusTimer : 0;
         this.setState({
             view: this.views.layout,
-            bonusActive: true,
+            bonusActive: (multiplier > 1),
             bonusDoubled: doubled,
             bonusMultiplier: multiplier,
+        }, () => {
+            this.saveGame(false);
         });
-        this.timers.bonusTimer = this.timers.defaults.bonusTimer;
     }
 
     clearSaveData() {
@@ -278,16 +283,11 @@ export default class Game extends React.Component {
 
 
     gameTimers() {
-        let timer;
-        let defaultTime;
-
         // salary timer
         if (this.state.salary > 0) {
-            timer = this.timers.salaryTimer;
-            defaultTime = this.timers.defaults.salaryTimer;
-            if (timer === 0) {
+            if (this.timers.salaryTimer === 0) {
                 this.takeSalary();
-                this.timers.salaryTimer = defaultTime;
+                this.timers.salaryTimer = this.timers.defaults.salaryTimer;
             } else {
                 this.timers.salaryTimer--;
             }
@@ -309,7 +309,7 @@ export default class Game extends React.Component {
                 });
             }
 
-            if (timer === 0) {
+            if (this.timers.bonusTimer === 0) {
                 this.setState({
                     bonusActive: false,
                     bonusDoubled: false,
@@ -322,9 +322,6 @@ export default class Game extends React.Component {
         }
 
         // auto save timer
-        timer = this.timers.saveTimer;
-        defaultTime = this.timers.defaults.saveTimer;
-
         if (this.debug) {
             Logger.log({
                 message: 'save timer',
@@ -332,27 +329,29 @@ export default class Game extends React.Component {
             });
         }
 
-        if (timer === 0) {
-            this.setState({bonusActive: false});
+        if (this.timers.saveTimer === 0) {
             this.saveGame();
-            this.timers.saveTimer = defaultTime;
+            this.timers.saveTimer = this.timers.defaults.saveTimer;
         } else {
             this.timers.saveTimer--;
         }
 
-        this.setState({timers: {...this.timers}});
+        this.setState({
+            timers: {...this.timers}
+        });
     }
 
     perTickCalculations() {
-        let newScore = (this.state.perSecond * this.state.perSecondMultiplier) * this.state.bonusMultiplier;
+        let newScore = (this.state.perSecond * this.state.perSecondMultiplier);
         if (this.state.bonusActive) {
-            let bonusDoubled = (this.state.bonusDoubled) ? 2 : 1;
-            newScore *= bonusDoubled;
+            newScore *= this.state.bonusMultiplier;
+            newScore *= ((this.state.bonusDoubled) ? 2 : 1);
         }
         newScore += this.state.currentScore;
 
         let newMaxScore = newScore > this.state.maxScore ? newScore : this.state.maxScore;
         let items = gameFunctions.canShowItems(this.state.items, this.state.currentScore);
+
 
         this.setState({
             currentScore: newScore,
@@ -368,7 +367,7 @@ export default class Game extends React.Component {
     }
 
     defaultItemClickHandler() {
-        let amount = 1;
+        let amount = 100;
 
         if (this.debugClickDefaultItem) {
             amount = this.debugClickDefaultItem;
@@ -408,8 +407,8 @@ export default class Game extends React.Component {
     }
 
     componentDidMount() {
-        window.addEventListener("focus", this.onFocus);
-        window.addEventListener("blur", this.onBlur);
+        //window.addEventListener("focus", this.onFocus);
+        //window.addEventListener("blur", this.onBlur);
         let storage = window.localStorage;
         if (storage.getItem('gameData')) {
             this.loadGame(true);
@@ -427,8 +426,8 @@ export default class Game extends React.Component {
     }
 
     componentWillUnmount() {
-        window.removeEventListener("focus", this.onFocus);
-        window.removeEventListener("blur", this.onBlur);
+        //window.removeEventListener("focus", this.onFocus);
+        //window.removeEventListener("blur", this.onBlur);
         this.stopTicking();
     }
 

@@ -78,7 +78,6 @@ export default class ItemList extends React.Component {
                             currentScore={this.props.currentScore}
                             parents={itemIds}
                             purchaseItem={this.props.purchaseItem}
-                            formatNumber={this.props.formatNumber}
                         />
                     </div>
                 </li>

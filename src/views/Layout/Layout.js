@@ -36,6 +36,9 @@ export default class Layout extends React.Component {
                         currentScore={this.props.currentScore}
                         perSecond={this.props.perSecond}
                         perSecondMultiplier={this.props.perSecondMultiplier}
+                        bonusActive={this.props.bonusActive}
+                        bonusMultiplier={this.props.bonusMultiplier}
+                        bonusDoubled={this.props.bonusDoubled}
                     />
                     <Salary
                         salary={this.props.salary}

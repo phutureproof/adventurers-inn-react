@@ -84,7 +84,7 @@ class gameFunctionsClass {
      * @returns {string}
      */
     formatNumber(number) {
-        return this.numberFormat.format(number);
+        return this.numberFormat.format(number/100);
     }
 
     /**
@@ -92,7 +92,7 @@ class gameFunctionsClass {
      * @returns {string}
      */
     formatScore(score) {
-        return this.scoreFormat.format(score);
+        return this.scoreFormat.format(score/100);
     }
 
     /**
@@ -100,7 +100,7 @@ class gameFunctionsClass {
      * @returns {string}
      */
     formatInteger(number) {
-        return this.integerFormat.format(number);
+        return this.integerFormat.format(number/100);
     }
 
     /**
@@ -176,7 +176,7 @@ class gameFunctionsClass {
                 }
             }
             if (item.items) {
-                item.items = this.canShowItems(item.items);
+                item.items = this.canShowItems(item.items, currentScore);
             }
         });
         return items;
