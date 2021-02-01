@@ -38,7 +38,7 @@ function addProps(debug = false, items, startingIndex = 0) {
         item.prices = gameFunctions.calculateItemPrices(item);
 
         if (item.items) {
-            item.items = addProps(debug, item.items, startingIndex);
+            item.items = addProps(debug, item.items);
         }
     });
 

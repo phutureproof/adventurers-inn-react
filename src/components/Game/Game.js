@@ -30,7 +30,7 @@ export default class Game extends React.Component {
     };
 
     /* debug mode */
-    debug = false;
+    debug = true;
     /* gameData debug mode */
     debugGameData = false;
     /* debug click default item (false|integer)*/
@@ -269,15 +269,11 @@ export default class Game extends React.Component {
             stateItems.forEach(sItem => {
                 if (dItem.id === sItem.id) {
                     sItem.multipliers = dItem.multipliers;
-                    sItem.name = dItem.name;
                 }
                 if (sItem.items) {
                     this.mapItemMultipliers(defaultItems, sItem.items);
                 }
             });
-            if (dItem.items) {
-                this.mapItemMultipliers(dItem, stateItems);
-            }
         });
     }
 
@@ -470,6 +466,7 @@ export default class Game extends React.Component {
         /** @type {Item} **/
         let foundItem;
         let items = this.state.items.slice();
+
 
         itemIds.forEach(id => {
             foundItem = foundItem ? foundItem.items[id] : items[id];
