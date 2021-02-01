@@ -30,7 +30,7 @@ export default class Game extends React.Component {
     };
 
     /* debug mode */
-    debug = true;
+    debug = false;
     /* gameData debug mode */
     debugGameData = false;
     /* debug click default item (false|integer)*/
